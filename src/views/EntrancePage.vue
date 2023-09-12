@@ -39,7 +39,7 @@ export default {
         </el-menu-item>
       </el-menu>
     </el-col>
-    <el-col :span="16">
+    <el-col :span="20">
       <image-comp v-if="activeItem === '1'"></image-comp>
       <container-comp v-else-if="activeItem === '2'"></container-comp>
       <application-comp v-else></application-comp>
