@@ -1,9 +1,9 @@
 <script >
 import ImageComp from "@/components/imageComp.vue";
 import ContainerComp from "@/components/containerComp.vue";
-import ApplicationComp from "@/components/applicationComp.vue";
+
 export default {
-  components: {ApplicationComp, ContainerComp, ImageComp},
+  components: { ContainerComp, ImageComp},
   data() {
     return {
       activeItem: '1',
@@ -31,18 +31,13 @@ export default {
         </el-menu-item>
         <el-menu-item index="2">
           <i class="el-icon-folder"></i>
-          <span slot="title">容器管理</span>
-        </el-menu-item>
-        <el-menu-item index="3" >
-          <i class="el-icon-folder"></i>
-          <span slot="title">应用部署</span>
+          <span slot="title">工作负载</span>
         </el-menu-item>
       </el-menu>
     </el-col>
     <el-col :span="20">
       <image-comp v-if="activeItem === '1'"></image-comp>
-      <container-comp v-else-if="activeItem === '2'"></container-comp>
-      <application-comp v-else></application-comp>
+      <container-comp v-else></container-comp>
     </el-col>
 
   </el-row>
@@ -51,9 +46,8 @@ export default {
 <style>
 .el-menu-vertical-demo{
   height: 100vh;
-  .el-menu-item{
-    font-size: 15px;
-  }
 }
-
+.el-menu-item{
+  font-size: 15px;
+}
 </style>
