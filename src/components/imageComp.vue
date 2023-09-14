@@ -183,26 +183,24 @@
     </el-dialog>
 
     <el-dialog title="启动工作负载" :visible.sync="dialogRunVisible" max-width="960px">
-      <el-form  label-width="80px" :model="runPodForm" style="margin-top: -30px">
+      <el-form  label-width="100px" :model="runPodForm" style="margin-top: -30px">
         <el-form-item label="镜像" style="text-align: left">
           {{runPodForm.image}}
         </el-form-item>
-        <el-form-item label="名称">
+        <el-form-item label="工作负载名称">
           <el-input v-model="runPodForm.name"></el-input>
         </el-form-item>
-        <el-form-item label="容器端口">
+        <el-form-item label="容器名称">
+          <el-input v-model="runPodForm.ctn_name"></el-input>
         </el-form-item>
-        <el-card style="max-width: 650px;margin-top: -50px;margin-left: 78px;">
-            <el-form :inline="true" :model="runPodForm.tmp">
-              <el-form-item label="Container_port">
-                <el-input v-model="runPodForm.tmp.container_port" style="width: 200px"></el-input>
-              </el-form-item>
-              <el-form-item label="Host_port">
-                <el-input v-model="runPodForm.tmp.host_port" style="width: 200px"></el-input>
-              </el-form-item>
-            </el-form></el-card>
-        <el-form-item label="环境变量" style="margin-top: 30px">
-          <el-input v-model="runPodForm.type" type="textarea"></el-input>
+        <el-form-item label="容器端口">
+          <el-input v-model="runPodForm.container_port"></el-input>
+        </el-form-item>
+        <el-form-item label="副本数">
+          <el-input v-model="runPodForm.replicas"></el-input>
+        </el-form-item>
+        <el-form-item label="环境变量">
+          <el-input v-model="runPodForm.environment" type="textarea"></el-input>
         </el-form-item>
       </el-form>
       <div  style="margin-top: 20px">
@@ -290,14 +288,11 @@ export default {
       },
       runPodForm: {
         name: '',
+        ctn_name:'',
         image: '',
         environment: '',
-        ports: [],
-        tmp: {
-          protocol: '',
-          container_port: '',
-          host_port: '',
-        }
+        container_port: '',
+        replicas: '',
       }
     }
   },
