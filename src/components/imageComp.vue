@@ -1,41 +1,41 @@
 <template>
   <div>
-      <el-tabs type="card" style="width: 90%; margin: 50px auto;">
-        <el-tab-pane label="私有镜像">
+      <el-tabs type="border-card" style="width: 90%; margin: 50px auto;">
+        <el-tab-pane label="私有镜像" style="position: relative">
           <el-table
               :data="tableData"
-              style="width: 100%">
+              style="width: 100%; margin-bottom: 60px;">
             <el-table-column
                 label="NAME"
-                width="160">
+                width="200">
               <template slot-scope="scope">
                 <span>{{ scope.row.name }}</span>
               </template>
             </el-table-column>
             <el-table-column
                 label="TAG"
-                width="160">
+                width="200">
               <template slot-scope="scope">
                 <span>{{ scope.row.tag }}</span>
               </template>
             </el-table-column>
             <el-table-column
                 label="IMAGE_ID"
-                width="160">
+                width="200">
               <template slot-scope="scope">
                 <span>{{ scope.row.image_id }}</span>
               </template>
             </el-table-column>
             <el-table-column
                 label="CREATED"
-                width="160">
+                width="200">
               <template slot-scope="scope">
                 <span >{{ scope.row.createdTime }}</span>
               </template>
             </el-table-column>
             <el-table-column
                 label="SIZE"
-                width="160">
+                width="200">
               <template slot-scope="scope">
                 <span>{{ scope.row.size }}</span>
               </template>
@@ -53,7 +53,9 @@
               </template>
             </el-table-column>
           </el-table>
-          <el-button circle type="primary" icon="el-icon-plus" @click="handleNew()" style="margin-left: 1050px"></el-button>
+          <el-button circle type="primary" icon="el-icon-plus" @click="handleNew()" id="add-icon" >
+<!--                     style="margin-left: 1050px"-->
+          </el-button>
         </el-tab-pane>
         <el-tab-pane label="共有镜像">
           <el-table
@@ -61,14 +63,14 @@
               style="width: 100%">
             <el-table-column
                 label="NAME"
-                width="160">
+                width="200">
               <template slot-scope="scope">
                 <span>{{ scope.row.name }}</span>
               </template>
             </el-table-column>
             <el-table-column
                 label="TAG"
-                width="160">
+                width="200">
               <template slot-scope="scope">
                 <span>{{ scope.row.tag }}</span>
               </template>
@@ -82,19 +84,19 @@
             </el-table-column>
             <el-table-column
                 label="CREATED"
-                width="160">
+                width="200">
               <template slot-scope="scope">
                 <span >{{ scope.row.createdTime }}</span>
               </template>
             </el-table-column>
             <el-table-column
                 label="SIZE"
-                width="160">
+                width="200">
               <template slot-scope="scope">
                 <span>{{ scope.row.size }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="VIEW" width="100">
+            <el-table-column label="VIEW" width="200">
               <template slot-scope="scope">
                 <i class="el-icon-view icon-container" @click="handleView(scope.$index, scope.row)"></i>
               </template>
@@ -150,7 +152,7 @@
       <div style="margin-top: -30px">
         <p v-for="(value,key) in viewItem" :key='key'>{{key}}:{{value}}</p>
       </div>
-      <el-button @click="dialogViewVisible = false" style="margin-left: 650px">返 回</el-button>
+
     </el-dialog>
 
     <el-dialog  title="修改镜像" :visible.sync="dialogEditVisible" max-width="960px">
@@ -340,5 +342,9 @@ export default {
 </script>
 
 <style scoped>
-
+#add-icon{
+  position: absolute;
+  bottom: -60px;
+  right: 0px;
+}
 </style>
