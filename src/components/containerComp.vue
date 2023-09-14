@@ -32,7 +32,7 @@ export default {
   },
   methods:{
     async test () {
-      this.$http.get('/get_list' , {}).then(res => {
+      this.$http.post('/list_node' , {}).then(res => {
         console.log(res)
       }).catch(err => console.log(err))
     },
@@ -49,6 +49,7 @@ export default {
 <template>
   <el-tabs type="border-card" style="width: 90%; margin: 50px auto;">
     <el-tab-pane label="pod">
+      <el-button @click="test">ceshi</el-button>
       <pod-list></pod-list>
     </el-tab-pane>
     <el-tab-pane label="deployment">
