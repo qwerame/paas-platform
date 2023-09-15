@@ -6,38 +6,31 @@
               :data="tableData"
               style="width: 100%; margin-bottom: 60px;">
             <el-table-column
-                label="NAME"
+                label="NAME:TAG"
                 width="200">
               <template slot-scope="scope">
-                <span>{{ scope.row.name }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column
-                label="TAG"
-                width="200">
-              <template slot-scope="scope">
-                <span>{{ scope.row.tag }}</span>
+                <span>{{ scope.row.tags[0] }}</span>
               </template>
             </el-table-column>
             <el-table-column
                 label="IMAGE_ID"
                 width="200">
               <template slot-scope="scope">
-                <span>{{ scope.row.image_id }}</span>
+                <span>{{ scope.row.short_id }}</span>
               </template>
             </el-table-column>
             <el-table-column
                 label="CREATED"
                 width="200">
               <template slot-scope="scope">
-                <span >{{ scope.row.createdTime }}</span>
+                <span >{{ scope.row.attrs.Created.substr(0, 10) }}</span>
               </template>
             </el-table-column>
             <el-table-column
                 label="SIZE"
                 width="200">
               <template slot-scope="scope">
-                <span>{{ scope.row.size }}</span>
+                <span>{{ scope.row.attrs.Size }}</span>
               </template>
             </el-table-column>
             <el-table-column label="OPERATE" width="180">
@@ -62,38 +55,31 @@
               :data="tableData1"
               style="width: 100%">
             <el-table-column
-                label="NAME"
+                label="NAME:TAG"
                 width="200">
               <template slot-scope="scope">
-                <span>{{ scope.row.name }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column
-                label="TAG"
-                width="200">
-              <template slot-scope="scope">
-                <span>{{ scope.row.tag }}</span>
+                <span>{{ scope.row.tags[0] }}</span>
               </template>
             </el-table-column>
             <el-table-column
                 label="IMAGE_ID"
                 width="160">
               <template slot-scope="scope">
-                <span>{{ scope.row.image_id }}</span>
+                <span>{{ scope.row.short_id }}</span>
               </template>
             </el-table-column>
             <el-table-column
                 label="CREATED"
                 width="200">
               <template slot-scope="scope">
-                <span >{{ scope.row.createdTime }}</span>
+                <span >{{scope.row.attrs.Created.substr(0, 10) }}</span>
               </template>
             </el-table-column>
             <el-table-column
                 label="SIZE"
                 width="200">
               <template slot-scope="scope">
-                <span>{{ scope.row.size }}</span>
+                <span>{{ scope.row.attrs.Size }}</span>
               </template>
             </el-table-column>
             <el-table-column label="VIEW" width="200">
@@ -149,8 +135,11 @@
     </el-dialog>
 
     <el-dialog  title="详细信息" :visible.sync="dialogViewVisible" max-width="960px" style="text-align: left">
-      <div style="margin-top: -30px">
-        <p v-for="(value,key) in viewItem" :key='key'>{{key}}:{{value}}</p>
+      <div style="margin-top: -30px" >
+        <p v-for="(value, index) in viewItem1" v-if="index!=='attrs'">
+          {{index}}:{{value}}
+        </p>
+        <p v-for="(value1,key) in viewItem" :key='key'>{{key}}:{{value1}}</p>
       </div>
 
     </el-dialog>
@@ -194,7 +183,7 @@
           <el-input v-model="runPodForm.ctn_name"></el-input>
         </el-form-item>
         <el-form-item label="容器端口">
-          <el-input v-model="runPodForm.container_port"></el-input>
+          <el-input v-model="runPodForm.port"></el-input>
         </el-form-item>
         <el-form-item label="副本数">
           <el-input v-model="runPodForm.replicas"></el-input>
@@ -213,65 +202,21 @@
 </template>
 
 <script>
+import axios from 'axios'
+import qs from 'qs'
 export default {
   name: 'imageComp',
   data() {
     return {
-      tableData: [{
-        name: 'ubuntu',
-        tag:'latest',
-        image_id:'ba6acccedd29',
-        createdTime:'5 months ago',
-        size:'100M',
-      }, {
-        name: 'ubuntu',
-        tag:'latest',
-        image_id:'ba6acccedd30',
-        createdTime:'5 months ago',
-        size:'100M',
-      }, {
-        name: 'ubuntu',
-        tag:'latest',
-        image_id:'ba6acccedd31',
-        createdTime:'5 months ago',
-        size:'100M',
-      }, {
-        name: 'ubuntu',
-        tag:'latest',
-        image_id:'ba6acccedd32',
-        createdTime:'5 months ago',
-        size:'100M',
-      }],
-      tableData1: [{
-        name: 'ubuntu',
-        tag:'latest',
-        image_id:'ba6acccedd29',
-        createdTime:'5 months ago',
-        size:'100M',
-      }, {
-        name: 'ubuntu',
-        tag:'latest',
-        image_id:'ba6acccedd30',
-        createdTime:'5 months ago',
-        size:'100M',
-      }, {
-        name: 'ubuntu',
-        tag:'latest',
-        image_id:'ba6acccedd31',
-        createdTime:'5 months ago',
-        size:'100M',
-      }, {
-        name: 'ubuntu',
-        tag:'latest',
-        image_id:'ba6acccedd32',
-        createdTime:'5 months ago',
-        size:'100M',
-      }],
+      image_list:'',
+      tableData: [],
+      tableData1: [],
       dialogNewVisible: false,
       dialogViewVisible: false,
       dialogEditVisible: false,
       dialogRunVisible: false,
       viewItem:'',
+      viewItem1:'',
       fileList:[],
       fileEditList:[],
       headers: {
@@ -291,47 +236,143 @@ export default {
         ctn_name:'',
         image: '',
         environment: '',
-        container_port: '',
+        port: '',
         replicas: '',
       }
     }
   },
   methods: {
+    listImage() {
+      this.$http.post('/list_images' , {}).then(res => {
+        this.image_list=res.data;
+        this.tableData=[];
+        this.tableData1=[];
+        console.log(this.image_list)
+        for (let i = 0; i < this.image_list.length; i++) {
+          let a = this.image_list[i];
+          if (!a.isPublic) {
+            this.tableData.push(this.image_list[i])
+          }else {
+            this.tableData1.push(this.image_list[i])
+          }
+        }
+      }).catch(err => console.log(err))
+    },
     handleNew(){
       this.dialogNewVisible=true;
     },
     handleView(index, row) {
-      this.viewItem=row;
+      this.viewItem=row.attrs;
+      this.viewItem1=row;
       this.dialogViewVisible=true;
     },
     handleEdit(index, row) {
       this.dialogEditVisible=true;
     },
     handleDelete(index, row) {
-      console.log(index, row);
+      let form = new FormData();
+      form.append('tag', row.tags[0]);
+      this.$confirm('此操作将永久删除该镜像, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.post('/remove_image' , form).then(res => {
+          this.listImage();
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(err => console.log(err))
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
     },
     handleRun(index, row) {
-      this.runPodForm.image=row.name;
+      this.runPodForm.image=row.tags[0];
       this.dialogRunVisible=true;
     },
     handleChange(file, fileList) {
       this.fileList = fileList;
     },
-    handleEditChange(file, fileList) {
-      this.fileEditList = fileList;
+    handleEditChange(file, fileList1) {
+      this.fileEditList = fileList1;
     },
     DockerfileConfirmUpload(){//dockerfile提交
+      let form = new FormData();
+      this.fileList.forEach(
+          (val, index) => {
+            form.append("dockerfile", val.raw);
+          }
+      );
+      let tag1=this.DockerfileForm.imageName+":"+this.DockerfileForm.imageTag;
+      form.append('tag', tag1);
+      this.$http.post('/build_image', form).then(res => {
+        alert(res.data.msg)
+        this.listImage();
+      }).catch(err => console.log(err))
+      this.$http2.post('/build_image', form).then(res => {
+        alert(res.data.msg)
+        this.listImage();
+      }).catch(err => console.log(err))
+      this.$http3.post('/build_image', form).then(res => {
+        alert(res.data.msg)
+        this.listImage();
+      }).catch(err => console.log(err))
       this.dialogNewVisible=false
     },
     DockerfileEditConfirmUpload(){
+      let form = new FormData();
+      this.fileEditList.forEach(
+          (val, index) => {
+            form.append("dockerfile", val.raw);
+          }
+      );
+      let tag2=this.DockerfileEditForm.imageName+":"+this.DockerfileEditForm.imageTag;
+      form.append('tag', tag2);
+      this.$http.post('/edit_image', form).then(res => {
+        alert(res.data.msg)
+        this.listImage();
+      }).catch(err => console.log(err))
+      this.$http2.post('/edit_image', form).then(res => {
+        alert(res.data.msg)
+        this.listImage();
+      }).catch(err => console.log(err))
+      this.$http3.post('/edit_image', form).then(res => {
+        alert(res.data.msg)
+        this.listImage();
+      }).catch(err => console.log(err))
       this.dialogEditVisible=false
     },
     confirmUpload(){//远端提交
+      let form = new FormData();
+      form.append('name', this.input);
+      this.$http.post('/pull_image', form).then(res => {
+        alert(res.data.msg)
+        this.listImage();
+      }).catch(err => console.log(err))
       this.dialogNewVisible=false
     },
     confirmRun(){
+      let form = new FormData();
+      form.append('name', this.runPodForm.name);
+      form.append('replicas', this.runPodForm.replicas);
+      form.append('ctn_name', this.runPodForm.ctn_name);
+      form.append('image', this.runPodForm.image);
+      form.append('port', this.runPodForm.port);
+      form.append('env', this.runPodForm.environment);
+      this.$http.post('/run_deployment', form).then(res => {
+        alert(res.data.msg)
+        console.log(res.data.msg)
+      }).catch(err => console.log(err))
       this.dialogRunVisible=false;
     }
+  },
+  async mounted() {
+    await this.listImage();
   }
 }
 </script>
