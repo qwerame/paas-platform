@@ -311,15 +311,16 @@ export default {
       let tag1=this.DockerfileForm.imageName+":"+this.DockerfileForm.imageTag;
       form.append('tag', tag1);
       this.$http.post('/build_image', form).then(res => {
-        alert(res.data.msg)
+        this.$message({
+          type: 'success',
+          message: '构建成功!'
+        });
         this.listImage();
       }).catch(err => console.log(err))
       this.$http2.post('/build_image', form).then(res => {
-        alert(res.data.msg)
         this.listImage();
       }).catch(err => console.log(err))
       this.$http3.post('/build_image', form).then(res => {
-        alert(res.data.msg)
         this.listImage();
       }).catch(err => console.log(err))
       this.dialogNewVisible=false
@@ -334,15 +335,16 @@ export default {
       let tag2=this.DockerfileEditForm.imageName+":"+this.DockerfileEditForm.imageTag;
       form.append('tag', tag2);
       this.$http.post('/edit_image', form).then(res => {
-        alert(res.data.msg)
+        this.$message({
+          type: 'success',
+          message: '构建成功!'
+        });
         this.listImage();
       }).catch(err => console.log(err))
       this.$http2.post('/edit_image', form).then(res => {
-        alert(res.data.msg)
         this.listImage();
       }).catch(err => console.log(err))
       this.$http3.post('/edit_image', form).then(res => {
-        alert(res.data.msg)
         this.listImage();
       }).catch(err => console.log(err))
       this.dialogEditVisible=false
@@ -351,7 +353,10 @@ export default {
       let form = new FormData();
       form.append('name', this.input);
       this.$http.post('/pull_image', form).then(res => {
-        alert(res.data.msg)
+        this.$message({
+          type: 'success',
+          message: '拉取成功!'
+        });
         this.listImage();
       }).catch(err => console.log(err))
       this.dialogNewVisible=false
@@ -365,7 +370,10 @@ export default {
       form.append('port', this.runPodForm.port);
       form.append('env', this.runPodForm.environment);
       this.$http.post('/run_deployment', form).then(res => {
-        alert(res.data.msg)
+        this.$message({
+          type: 'success',
+          message: '启动成功!'
+        });
         console.log(res.data.msg)
       }).catch(err => console.log(err))
       this.dialogRunVisible=false;
