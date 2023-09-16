@@ -337,7 +337,7 @@ export default {
       this.$http.post('/edit_image', form).then(res => {
         this.$message({
           type: 'success',
-          message: '构建成功!'
+          message: '修改成功!'
         });
         this.listImage();
       }).catch(err => console.log(err))
