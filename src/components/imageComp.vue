@@ -157,14 +157,6 @@
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
       </el-upload>
-      <el-form :inline="true" :model="DockerfileEditForm" style="margin-top: 20px">
-        <el-form-item label="IMAGE">
-          <el-input v-model="DockerfileEditForm.imageName" style="width: 250px"></el-input>
-        </el-form-item>
-        <el-form-item label="TAG">
-          <el-input v-model="DockerfileEditForm.imageTag" style="width: 150px"></el-input>
-        </el-form-item>
-      </el-form>
       <div  style="margin-top: 20px">
         <el-button @click="dialogEditVisible = false">取 消</el-button>
         <el-button type="primary" @click="DockerfileEditConfirmUpload()">上 传</el-button>
@@ -227,10 +219,7 @@ export default {
         imageName: '',
         imageTag: ''
       },
-      DockerfileEditForm: {
-        imageName: '',
-        imageTag: ''
-      },
+      DockerfileEditForm: '',
       runPodForm: {
         name: '',
         ctn_name:'',
@@ -268,6 +257,7 @@ export default {
     },
     handleEdit(index, row) {
       this.dialogEditVisible=true;
+      this.DockerfileEditForm=row.tags[0];
     },
     handleDelete(index, row) {
       let form = new FormData();
@@ -278,11 +268,11 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http.post('/remove_image' , form).then(res => {
-          this.listImage();
           this.$message({
             type: 'success',
             message: '删除成功!'
           });
+          this.listImage();
         }).catch(err => console.log(err))
       }).catch(() => {
         this.$message({
@@ -318,10 +308,10 @@ export default {
         this.listImage();
       }).catch(err => console.log(err))
       this.$http2.post('/build_image', form).then(res => {
-        this.listImage();
+        console.log(res.data.msg)
       }).catch(err => console.log(err))
       this.$http3.post('/build_image', form).then(res => {
-        this.listImage();
+        console.log(res.data.msg)
       }).catch(err => console.log(err))
       this.dialogNewVisible=false
     },
@@ -332,7 +322,8 @@ export default {
             form.append("dockerfile", val.raw);
           }
       );
-      let tag2=this.DockerfileEditForm.imageName+":"+this.DockerfileEditForm.imageTag;
+      let tag2=this.DockerfileEditForm;
+      console.log(tag2);
       form.append('tag', tag2);
       this.$http.post('/edit_image', form).then(res => {
         this.$message({
@@ -342,10 +333,10 @@ export default {
         this.listImage();
       }).catch(err => console.log(err))
       this.$http2.post('/edit_image', form).then(res => {
-        this.listImage();
+        console.log(res.data.msg)
       }).catch(err => console.log(err))
       this.$http3.post('/edit_image', form).then(res => {
-        this.listImage();
+        console.log(res.data.msg)
       }).catch(err => console.log(err))
       this.dialogEditVisible=false
     },
